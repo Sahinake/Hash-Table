@@ -153,7 +153,7 @@ void removerHash(Hash tab, int chave) {
         }
         else {
             printf("\n\n\n");
-            imprimeColisao(tab,indice);
+            printf("Colisão:"); imprimeColisao(tab,indice);
 
             Dados* aux = tab[indice];
             if(aux->key == chave) {
@@ -237,6 +237,7 @@ int main() {
     inserirHash(hash, 40, "A Business Proposal");
     inserirHash(hash, 23, "Crash Landing on You");
     inserirHash(hash, 86, "Hotel Del Luna");
+    inserirHash(hash, 46, "Hot Young Bloods");
     inserirHash(hash, 13, "Playfull Kiss");
     inserirHash(hash, 27, "The Uncanny Counter");
     inserirHash(hash, 47, "Twenty-five, Twenty-one");
@@ -245,6 +246,7 @@ int main() {
 
     removerHash(hash, 11);
     removerHash(hash, 13);
+    removerHash(hash, 46);
 
     imprimeHash(hash);
 
