@@ -2,23 +2,6 @@
 # include <stdlib.h>
 # include "hash.h"
 
-void imprimeColisao(Hash tab, int pos) {
-    Dados* aux = tab[pos];
-    
-    if(aux == NULL) {
-        printf("Esta posição está vazia!\n");
-        return;
-    }
-    else {
-        printf("%3d", aux->key);
-        while(aux->prox != NULL) {
-            printf(" -> %d", aux->prox->key);
-            aux = aux->prox;
-            
-        }
-    }
-}
-
 /*
 Algoritmo: Função Hash; 
 Entrada: variável do tipo inteiro (num)
@@ -63,6 +46,28 @@ void inserirHash(Hash tab, int chave) {
         aux->key = chave;
         aux->prox = tab[indice];
         tab[indice] = aux;
+    }
+}
+
+/*
+Algoritmo: Imprime Colisão; 
+Entrada: variável do tipo Hash (tab) e inteiro indice (pos);
+Função: mostra uma posição e todas as suas colisões.
+*/
+void imprimeColisao(Hash tab, int pos) {
+    Dados* aux = tab[pos];
+    
+    if(aux == NULL) {
+        printf("Esta posição está vazia!\n");
+        return;
+    }
+    else {
+        printf("%3d", aux->key);
+        while(aux->prox != NULL) {
+            printf(" -> %d", aux->prox->key);
+            aux = aux->prox;
+            
+        }
     }
 }
 
