@@ -7,8 +7,8 @@ Algoritmo: Função Hash;
 Entrada: variável do tipo inteiro (num)
 Função: Retorna o resto da divisão do valor dessa variável pelo tamanho da tabela
 */
-int funcaoHash(int num) {
-    return(num%tam);
+int funcaoHash(int chave) {
+    return(chave%tam);
 }
 
 /*
@@ -29,23 +29,32 @@ Entrada: variável do tipo Hash (tab) e um inteiro (num);
 Função: Sua função é inserir os elementos na tabela através da função Hash e caso esta posição já esteja 
 preenchida, como colisão está sendo adotado neste procedimento o encadeamento direto.
 */
-void inserirHash(Hash tab, int chave) {
+void inserirHash(Hash tab, int chave, char *valor) {
     int i = 0, indice = funcaoHash(chave);
-    Dados* aux = tab[indice];
     
-    // percorre a hash, se encontra o elemento, nada acontece!
-    while(aux != NULL) {
-        if(aux->key == chave) {
-            break;
-        }
-        aux = aux->prox;
+    Dados* item = tab[indice];
+
+    Dados* novoItem = (Dados*)malloc(sizeof(Dados));
+    novoItem->key = chave;
+    novoItem->info = valor;
+    novoItem->prox = NULL;
+
+    if(item == NULL) {
+        tab[indice] = novoItem;
+        return;
     }
-    // se chegou ao fim da lista, cria um novo elemento e insere
-    if(aux == NULL) {
-        aux = (Dados*)malloc(sizeof(Dados));
-        aux->key = chave;
-        aux->prox = tab[indice];
-        tab[indice] = aux;
+    else {
+        while(item != NULL) {
+            if (item->key == chave) {
+                printf("\nEsta chave já existe!");
+                return;
+            }
+            if (item->prox == NULL) {
+                item->prox = novoItem;
+                return;
+            }
+            item = item->prox;
+        }
     }
 }
 
@@ -84,7 +93,19 @@ void buscarHash(Hash tab, int chave) {
         return;
     }
     else {
-        imprimeColisao(tab, indice);
+        Dados* aux = tab[indice];
+        while(aux != NULL && aux->key != chave) {
+            aux = aux->prox;
+        }
+        if(aux == NULL) {
+            printf("\nChave não encontrada!");
+            return;
+        }
+        else {
+            printf("\nResultado da busca: %s", aux->info);
+            printf("\n");
+            return;
+        }
     }
 }
 
@@ -95,7 +116,7 @@ Função: Sua função é imprimir todos os elementos da variável.
 */
 void imprimeHash(Hash tab) {
     int i = 0, cont = 0;
-    printf("\n========================\n");
+    printf("\n========================");
     for(i = 0; i < tam; i++) {
         if(tab[i] != NULL) {
             printf("\n %d", tab[i]->key);
@@ -134,21 +155,30 @@ void removerHash(Hash tab, int chave) {
             printf("\n\n\n");
             imprimeColisao(tab,indice);
 
-            if(tab[indice]->key == chave) {
-                if(tab[indice]->prox != NULL) {
-                    tab[indice]->key = tab[indice]->prox->key;
-                    tab[indice]->prox = tab[indice]->prox->prox;
+            Dados* aux = tab[indice];
+            if(aux->key == chave) {
+                if(aux->prox != NULL) {
+                    aux->key = aux->prox->key;
+                    aux->info = aux->prox->info;
+                    aux->prox = aux->prox->prox;
                     return;               
                 }
+                else {
+                    tab[indice] = NULL;
+                    aux = NULL;
+                    free(aux);
+                    return;
+                }
+            }
             else {
-                if(tab[indice]->key != chave) {
-                    if(tab[indice]->prox == NULL) {
+                if(aux->key != chave) {
+                    if(aux->prox == NULL) {
                         printf("\nRegistro não encontrado!");
                         return;
                     }
                     else {
                         Dados* ant = NULL;
-                        Dados* aux = tab[indice]->prox;
+                        aux = aux->prox;
                         while(aux->prox != NULL && aux->key != chave) {
                             ant = aux;
                             aux = aux->prox;
@@ -169,11 +199,11 @@ void removerHash(Hash tab, int chave) {
                         }
                     }
                 }
-                }
             }
         }
     }
 }
+
 
 /*
 Algoritmo: Quantidade de Colisões; 
@@ -200,24 +230,31 @@ int main() {
     Hash hash;
     inicializarHash(hash);
 
-    inserirHash(hash,40);
-    imprimeHash(hash);
-    inserirHash(hash,30);
-    imprimeHash(hash);
-    inserirHash(hash,70);
-    imprimeHash(hash);
-    inserirHash(hash,120);
-    imprimeHash(hash);
-    inserirHash(hash,56);
-    imprimeHash(hash);
-    inserirHash(hash,67);
-    imprimeHash(hash);
-    inserirHash(hash,2);
+    inserirHash(hash, 20, "All of Us Are Dead");
+    inserirHash(hash, 2, "Bring it On Ghost");
+    inserirHash(hash, 64, "Flower of Evil");
+    inserirHash(hash, 45, "Healer");
+    inserirHash(hash, 40, "A Business Proposal");
+    inserirHash(hash, 23, "Crash Landing on You");
+    inserirHash(hash, 86, "Hotel Del Luna");
+    inserirHash(hash, 13, "Playfull Kiss");
+    inserirHash(hash, 27, "The Uncanny Counter");
+    inserirHash(hash, 47, "Twenty-five, Twenty-one");
+
     imprimeHash(hash);
 
-    removerHash(hash,rand()%70);
-    removerHash(hash,70);
+    removerHash(hash, 11);
+    removerHash(hash, 13);
+
     imprimeHash(hash);
+
+    buscarHash(hash, 13);
+    buscarHash(hash, 45);
+    buscarHash(hash, 40);
+
+
+
+
 
     return 0;
 }
